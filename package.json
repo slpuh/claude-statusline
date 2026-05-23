@@ -1,0 +1,13 @@
+{
+  "name": "claude-statusline",
+  "version": "1.0.0",
+  "description": "Minimal statusline for Claude Code — model, context, session time, rate limits",
+  "bin": {
+    "claude-statusline": "scripts/install.js"
+  },
+  "keywords": ["claude", "claude-code", "statusline", "terminal"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
