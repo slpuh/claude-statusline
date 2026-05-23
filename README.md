@@ -2,10 +2,7 @@
 
 Minimal statusline for [Claude Code](https://claude.ai/code) — shows model, context usage, session time, effort level, cost, and rate limits.
 
-```
-sonnet-4.6 | 🧠  9% · 93k/200k | ⏱ 44m | ◑ high | $0.42
-5h ▪▪▪▪▫▫▫▫▫▫▫▫ 34% ↻ 4:40pm  |  7d ▫▫▫▫▫▫▫▫▫▫▫▫ 4% ↻ may 30, 7:00am
-```
+![demo](demo.png)
 
 ## What it shows
 
