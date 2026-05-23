@@ -1,21 +1,24 @@
 # claude-statusline
 
-Minimal statusline for [Claude Code](https://claude.ai/code) — shows model, context usage, session time, effort level, cost, and rate limits.
+Minimal statusline for [Claude Code](https://claude.ai/code) — shows model, context usage, cache hit rate, session time, effort level, cost, rate limits, and current repo/branch.
 
 ![demo](demo.png)
 
 ## What it shows
 
 **Line 1** — session info:
-- Model name (shortened)
-- 🧠 Context usage — percent + tokens used/total, color-coded
+- Model name (shortened) — with `⚡` when fast mode is on
+- 🧠 Context usage — percent + tokens used/total + cache hit %
 - ⏱ Session duration
 - Effort level indicator (`◔` low → `◉` xhigh)
+- `✱ think` when extended thinking is enabled
 - Session cost in USD
 
 **Line 2** — rate limits (hidden when not available):
 - 5-hour window — usage bar + reset time
 - 7-day window — usage bar + reset date
+
+**Line 3** — repo + branch (hidden when not in a git repo)
 
 Colors shift from green → yellow → orange → red as usage increases.
 

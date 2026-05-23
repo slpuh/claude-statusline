@@ -69,6 +69,8 @@ ctx_pct=$(j '.context_window.used_percentage')
 [ -z "$ctx_pct" ] && ctx_pct=0
 ctx_in_total=$(j '.context_window.total_input_tokens')
 ctx_size=$(j '.context_window.context_window_size')
+cache_read=$(j '.context_window.current_usage.cache_read_input_tokens')
+cache_create=$(j '.context_window.current_usage.cache_creation_input_tokens')
 
 fmt_tokens() {  # 91745 → "92k"; 1000000 → "1M"
     local n=${1:-0}
@@ -88,6 +90,16 @@ sess_ms=$(j '.cost.total_duration_ms')
 
 thinking=$(j '.thinking.enabled')
 fast_mode=$(j '.fast_mode')
+
+cwd=$(j '.cwd')
+repo_name=$(j '.workspace.repo.name')
+branch=""
+[ -n "$cwd" ] && branch=$(git -C "$cwd" branch --show-current 2>/dev/null)
+
+cache_hit_pct=""
+if [ -n "$cache_read" ] && [ -n "$ctx_in_total" ] && [ "$ctx_in_total" -gt 0 ]; then
+    cache_hit_pct=$(awk -v r="$cache_read" -v t="$ctx_in_total" 'BEGIN { printf "%d", r/t*100 }')
+fi
 
 rl5_pct=$(j '.rate_limits.five_hour.used_percentage')
 rl5_reset=$(j '.rate_limits.five_hour.resets_at')
@@ -112,6 +124,7 @@ parts+=("\033[38;5;75m${model}\033[0m")
 [ "$fast_mode" = "true" ] && parts[-1]="${parts[-1]} \033[38;5;215m⚡\033[0m"
 ctx_part="${ctx_icon}  $(pct_color "$ctx_pct")${ctx_pct}%\033[0m"
 [ -n "$ctx_used_str" ] && ctx_part+=" \033[2m·\033[0m \033[2m${ctx_used_str}\033[0m"
+[ -n "$cache_hit_pct" ] && ctx_part+=" \033[2m·\033[0m \033[38;5;115mcache ${cache_hit_pct}%\033[0m"
 parts+=("$ctx_part")
 if [ -n "$sess_ms" ] && [ "$sess_ms" != "0" ]; then
     parts+=("${time_icon} $(fmt_duration "$sess_ms")")
@@ -144,6 +157,14 @@ if [ -n "$rl7_pct" ]; then
     [ -n "$r" ] && line2+=" \033[2m↻\033[0m ${r}"
 fi
 
+# ── line 3 (repo + branch) ───────────────────────────
+line3=""
+if [ -n "$repo_name" ]; then
+    line3+="\033[38;5;245m${repo_name}\033[0m"
+    [ -n "$branch" ] && line3+="\033[2m:\033[0m\033[38;5;179m${branch}\033[0m"
+fi
+
 # ── output ────────────────────────────────────────────
 printf '%b' "$line1"
 [ -n "$line2" ] && printf '\n%b' "$line2"
+[ -n "$line3" ] && printf '\n%b' "$line3"
