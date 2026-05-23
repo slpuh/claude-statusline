@@ -1,7 +1,8 @@
 {
-  "name": "claude-statusline",
+  "name": "@slpuh/claude-statusline",
   "version": "1.0.0",
   "description": "Minimal statusline for Claude Code — model, context, session time, rate limits",
+  "author": "slpuh (https://github.com/slpuh)",
   "bin": {
     "claude-statusline": "scripts/install.js"
   },
