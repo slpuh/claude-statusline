@@ -6,10 +6,11 @@ input=$(cat)
 [ -z "$input" ] && { echo "Claude"; exit 0; }
 
 # debug: STATUSLINE_DEBUG=1 → dump stdin to /tmp
-[ "${STATUSLINE_DEBUG:-0}" = "1" ] && echo "$input" > /tmp/claude-statusline-last.json 2>/dev/null
+[ "${STATUSLINE_DEBUG:-0}" = "1" ] && { echo "$input" > /tmp/claude-statusline-last.json; chmod 600 /tmp/claude-statusline-last.json; } 2>/dev/null
 
 # ── helpers ───────────────────────────────────────────
 j() { echo "$input" | jq -r "$1 // empty"; }
+sanitize() { printf '%s' "$1" | sed 's/\\/\\\\/g'; }
 
 pct_color() {
     local p=${1:-0}
@@ -60,9 +61,9 @@ shorten_model() {  # "Opus 4.7 (1M context)" → "opus-4.7-1m"; "Claude Sonnet 4
 
 # ── data ──────────────────────────────────────────────
 model_raw=$(j '.model.display_name')
-model=$(shorten_model "${model_raw:-Claude}")
+model=$(sanitize "$(shorten_model "${model_raw:-Claude}")")
 
-effort=$(j '.effort.level')
+effort=$(sanitize "$(j '.effort.level')")
 [ -z "$effort" ] && effort="default"
 
 ctx_pct=$(j '.context_window.used_percentage')
@@ -92,9 +93,9 @@ thinking=$(j '.thinking.enabled')
 fast_mode=$(j '.fast_mode')
 
 cwd=$(j '.cwd')
-repo_name=$(j '.workspace.repo.name')
+repo_name=$(sanitize "$(j '.workspace.repo.name')")
 branch=""
-[ -n "$cwd" ] && branch=$(git -C "$cwd" branch --show-current 2>/dev/null)
+[ -n "$cwd" ] && branch=$(sanitize "$(git -C "$cwd" branch --show-current 2>/dev/null)")
 
 cache_hit_pct=""
 if [ -n "$cache_read" ] && [ -n "$ctx_in_total" ] && [ "$ctx_in_total" -gt 0 ]; then
