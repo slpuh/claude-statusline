@@ -123,7 +123,7 @@ SEP=' \033[2m|\033[0m '
 parts=()
 parts+=("\033[38;5;75m${model}\033[0m")
 [ "$fast_mode" = "true" ] && parts[-1]="${parts[-1]} \033[38;5;215m⚡\033[0m"
-ctx_part="${ctx_icon}  $(pct_color "$ctx_pct")${ctx_pct}%\033[0m"
+ctx_part="${ctx_icon} $(pct_color "$ctx_pct")${ctx_pct}%\033[0m"
 [ -n "$ctx_used_str" ] && ctx_part+=" \033[2m·\033[0m \033[2m${ctx_used_str}\033[0m"
 [ -n "$cache_hit_pct" ] && ctx_part+=" \033[2m·\033[0m \033[38;5;115mcache ${cache_hit_pct}%\033[0m"
 parts+=("$ctx_part")
