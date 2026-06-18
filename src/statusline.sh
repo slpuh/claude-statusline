@@ -133,7 +133,7 @@ fi
 parts+=("${eff_icon} ${effort}")
 [ "$thinking" = "true" ] && parts+=("\033[38;5;141m✱ think\033[0m")
 if [ -n "$cost_usd" ]; then
-    parts+=("\$$(printf '%.2f' "$cost_usd")")
+    parts+=("\$$(LANG=C awk -v c="$cost_usd" 'BEGIN { printf "%.2f", c }')")
 fi
 
 line1=""
@@ -169,3 +169,4 @@ fi
 printf '%b' "$line1"
 [ -n "$line2" ] && printf '\n%b' "$line2"
 [ -n "$line3" ] && printf '\n%b' "$line3"
+exit 0
